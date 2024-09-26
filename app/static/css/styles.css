@@ -58,6 +58,8 @@ body {
   flex: 2; /* Make the search input larger */
   padding: 8px; /* Adjust padding for better appearance */
   margin-right: 10px; /* Space between input and button */
+  font-size: 16px; /* Make the font size slightly larger */
+  min-width: 200px; /* Set a minimum width to avoid shrinking */
 }
 
 #addButton {
