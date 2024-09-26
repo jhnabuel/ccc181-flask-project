@@ -5,13 +5,16 @@
         <!-- Search Bar and Add Button -->
         <h3 class = "table-title">Colleges</h3>
         <div class="search-bar">
-            <select id="field" name="college-info" class="form-select-lg" data-selected-value="{{selected_info}}">
-                <option value="college-code">College Code</option>
-                <option value="college-name">College Name</option>
-              </select>
-            <input type="text" placeholder="Search college..." id="searchInput" name="search">
-            <button id="searchButton" type ="submit" class="btn btn-secondary">
-                Search Info</button>
+            <form method="GET" action="/college">
+                <select id="searchBy" name="search_by" class="form-select-lg" data-selected-value="{{selected_info}}">
+                    <option value="college-code" {% if selected_info == 'college-code' %}selected{% endif %}>College Code</option>
+                    <option value="college-name" {% if selected_info == 'college-name' %}selected{% endif %}>College Name</option>
+                </select>
+                <input type="text" placeholder="Search college..." id="searchInput" name="search" value="{{ request.args.get('search_term', '') }}">
+                <button id="searchButton" type ="submit" class="btn btn-secondary">
+                    Search Info</button>
+            </form>
+            
             <button id="addButton" type ="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#add-modal">
                 Add College</button>
         </div>
