@@ -15,12 +15,12 @@ class Colleges(object):
 
                 if search_term:
                     if search_by == 'college-name':
-                        sql += "WHERE college_name LIKE %s"
+                        sql += " WHERE college_name LIKE %s"
                     elif search_by == 'college-code':
-                        sql += "WHERE college_code LIKE %s"
+                        sql += " WHERE college_code LIKE %s"
 
                     search_pattern = f"%{search_term}%"
-                    curs.execute(sql(search_pattern,))
+                    curs.execute(sql, (search_pattern,))
                 else:
                     curs.execute(sql)
 

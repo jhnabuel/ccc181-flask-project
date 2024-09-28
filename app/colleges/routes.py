@@ -8,4 +8,4 @@ def college_page():
     search_by = request.args.get('search_by', 'college-name')  # Default to 'college-name'
 
     colleges_list = Colleges.get_all_colleges(search_by, search_term)
-    return render_template('college/college.html', colleges=colleges_list, selected_info=search_by)
+    return render_template('college/college.html', colleges=colleges_list, selected_info=search_by, search_term=search_term)
