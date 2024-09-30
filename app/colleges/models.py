@@ -33,6 +33,19 @@ class Colleges(object):
         except Exception as e:
             print(f"Error fetching all colleges: {e}")
             return []
+        
+    @classmethod
+    def get_by_code(cls, college_code):
+        try:
+            with mysql.connection.cursor() as curs:
+                sql = "SELECT * FROM college_table WHERE college_code = %s"
+                curs.execute(sql, (college_code,))
+                result = curs.fetchone()
+            return cls(*result) if result else None
+        except Exception as e:
+            # Handle the exception (e.g., log the error)
+            print(f"Error fetching college by code: {e}")
+            return None
 
 
     def add_college(self):
@@ -46,3 +59,14 @@ class Colleges(object):
             conn.commit()
         except Exception as e:
             print(f"Error adding college: {e}")
+    
+    def delete_college(self):
+        try:
+            conn = mysql.connection
+            curs = conn.cursor()
+            # Correct SQL statement
+            sql = "DELETE FROM college_table WHERE college_code = %s"
+            curs.execute(sql, (self.code,))
+            conn.commit()
+        except Exception as e:
+            print(f"Error deleting college: {e}")

@@ -20,17 +20,30 @@ def add_college():
     form = CollegeForm()
     if request.method == 'POST':
         if form.validate_on_submit():
+            # Check if college already exists
+            existing_college = Colleges.get_by_code(form.code.data)
+            if existing_college:
+                flash('Error: College with this code already exists.', 'danger')
+                return render_template('college/add_college.html', form=form)
+
             college = Colleges(code=form.code.data, name=form.name.data)
             try:
                 college.add_college()
                 flash('College added successfully', 'success')
                 return redirect(url_for('colleges.college_page'))
             except IntegrityError as e:
-                if "Duplicate entry" in str(e.args):
-                    flash('Error: College with this code already exists.', 'danger')
-                else:
-                    flash('Error: Failed to add college.', 'danger')
-        else:
-            flash('Error: All fields are required.', 'danger')
-            print(form.errors)
+                print(f"Error: {e}")  # Print error details for debugging
+                flash('Error: Failed to add college.', 'danger')
+
     return render_template('college/add_college.html', form=form)
+
+
+@colleges.route("/delete_college/<string:code>", methods=['POST'])
+def delete_college(code):
+    college = Colleges.get_by_code(code)
+    try:
+        college.delete_college()
+        flash('College deleted successfully', 'success')
+    except Exception as e:
+        flash('Error: Failed to delete college.', 'danger')
+    return redirect(url_for('colleges.college_page'))
