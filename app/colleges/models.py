@@ -33,3 +33,16 @@ class Colleges(object):
         except Exception as e:
             print(f"Error fetching all colleges: {e}")
             return []
+
+
+    def add_college(self):
+        try:
+            conn = mysql.connection
+            curs = conn.cursor()
+            # Correct SQL statement
+            sql = "INSERT INTO college_table (college_code, college_name) VALUES (%s, %s)"
+            values = (self.code, self.name)
+            curs.execute(sql, values)
+            conn.commit()
+        except Exception as e:
+            print(f"Error adding college: {e}")

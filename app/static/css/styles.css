@@ -3,6 +3,10 @@ body {
     background-color: #1e1e1e;
     font-family: 'Montserrat', sans-serif; 
 }
+
+label {
+  color: #F0F0F0 !important;
+}
 /* Dark background for navbar */
 .navbar {
     background-color: #363636;
@@ -28,7 +32,15 @@ body {
     background-color: #F0F0F0;
     color: #333333 !important;
   }
-  
+
+.navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.1); /* Optional: Change the border color if needed */
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='white' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
 
 .search-bar {
     display: flex;
@@ -46,11 +58,11 @@ body {
   color: #F0F0F0;
 }
 
-#field {
+#searchBy {
   flex: 1; /* Adjust the dropdown size */
   margin-right: 10px;
-  height: 43px;
-  width: 30px;
+  height: 40px;
+  width: 150px;
   font-size: 15px;
 }
 
@@ -60,9 +72,15 @@ body {
   margin-right: 10px; /* Space between input and button */
   font-size: 16px; /* Make the font size slightly larger */
   min-width: 200px; /* Set a minimum width to avoid shrinking */
+  width: 625px;
+  height: 40px;
 }
 
+#searchButton{
+  margin-right: 0;
+}
 #addButton {
+  height: 38px;
   flex-shrink: 0; /* Prevent the button from shrinking */
   white-space: nowrap; /* Prevent the button text from wrapping */
 }
