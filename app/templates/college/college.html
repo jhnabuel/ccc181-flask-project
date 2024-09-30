@@ -45,15 +45,14 @@
                 <tbody>
                     {% for college in colleges %}
                     <tr>
-                        <td>{{ college[0] }}</td>
-                        <td>{{ college[1] }}</td>
+                        <td>{{ college.code }}</td>
+                        <td>{{ college.name}}</td>
                         <td>
                             <a href="" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit">Edit</a>
                             <form method="POST" action="{{ url_for('colleges.delete_college', code=college.code) }}" style="display: inline-block;">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">  <!-- Manually include CSRF token -->
                                 <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete this college?')">Delete</button>
                             </form>
-                            
                         </td>
                     </tr>
                     {% endfor %}
