@@ -2,49 +2,34 @@
 from flask import Flask, render_template
 from flask import Flask
 from flask_mysqldb import MySQL
-from config import DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_NAME
+from flask_wtf.csrf import CSRFProtect
 import mysql.connector
-
+import os
 
 mysql = MySQL()
+csrf = CSRFProtect()
 
-def test_db_connection(app):
-    try:
-        # Establish a connection to the database
-        connection = mysql.connector.connect(
-            host=app.config['MYSQL_HOST'],
-            user=app.config['MYSQL_USER'],
-            password=app.config['MYSQL_PASSWORD'],
-            database=app.config['MYSQL_DB']
-        )
-        
-        if connection.is_connected():
-            print("Database connection successful!")
-            return True
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-        return False
-    finally:
-        if connection.is_connected():
-            connection.close()
+def create_app(test_config=None):
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_pyfile('config.py', silent=True)
+    
+    # Load configuration from environment variables
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '12341234')
+    app.config['MYSQL_USER'] = os.getenv('DB_USER')
+    app.config['MYSQL_USERNAME'] = os.getenv('DB_USERNAME')
+    app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD')
+    app.config['MYSQL_DB'] = os.getenv('DB_NAME')
+    app.config['MYSQL_HOST'] = os.getenv('DB_HOST')
 
-def create_app():
-    app = Flask(__name__)
-
-    app.config.from_mapping(
-        MYSQL_NAME=DB_NAME,
-        MYSQL_PASSWORD=DB_PASSWORD,
-        MYSQL_DB=DB_NAME,
-        MYSQL_HOST=DB_HOST,
-        MYSQL_USER=DB_USER
-    )
-
+    csrf.init_app(app)
     mysql.init_app(app)
+    
 
     # Routing the master template (index.html) directly
     @app.route('/')
     def index():
         return render_template('index.html')
+    
 
     # Import and register the students blueprint
     from .students import students as students_blueprint
@@ -57,3 +42,4 @@ def create_app():
     app.register_blueprint(colleges_blueprint)
 
     return app
+
