@@ -25,7 +25,7 @@ class Colleges(object):
                     curs.execute(sql)
 
                 # Fetch all results
-                colleges = curs.fetchall()
+                colleges = [cls(code=row[0], name=row[1]) for row in curs.fetchall()]
 
             # Return a list of Colleges objects
             return colleges
@@ -68,5 +68,6 @@ class Colleges(object):
             sql = "DELETE FROM college_table WHERE college_code = %s"
             curs.execute(sql, (self.code,))
             conn.commit()
+            curs.close()
         except Exception as e:
             print(f"Error deleting college: {e}")

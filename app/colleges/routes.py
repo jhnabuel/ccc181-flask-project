@@ -40,10 +40,19 @@ def add_college():
 
 @colleges.route("/delete_college/<string:code>", methods=['POST'])
 def delete_college(code):
+    print(f"Attempting to delete college with code: {code}")
     college = Colleges.get_by_code(code)
+    if college is None:
+        print("College not found.")
+        flash('Error: College not found.', 'danger')
+        return redirect(url_for('colleges.college_page'))
+
     try:
         college.delete_college()
         flash('College deleted successfully', 'success')
+        print("College deleted successfully.")
     except Exception as e:
+        print(f"Error during deletion: {e}")
         flash('Error: Failed to delete college.', 'danger')
+
     return redirect(url_for('colleges.college_page'))
