@@ -34,7 +34,7 @@
 
         <div class="table-container">
             <!-- Student Information Table -->
-            <table class = "table table-striped table-bordered">
+            <table class = "table table-striped">
                 <thead class = "bg-primary text-white">
                     <tr>
                         <th scope = "col">College Code</th>
@@ -49,7 +49,11 @@
                         <td>{{ college[1] }}</td>
                         <td>
                             <a href="" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit">Edit</a>
-                            <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete this college?')">Delete</button>
+                            <form method="POST" action="{{ url_for('colleges.delete_college', code=college.code) }}" style="display: inline-block;">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">  <!-- Manually include CSRF token -->
+                                <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete this college?')">Delete</button>
+                            </form>
+                            
                         </td>
                     </tr>
                     {% endfor %}
