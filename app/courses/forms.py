@@ -11,5 +11,6 @@ class CourseForm(FlaskForm):
 
     def set_college_choices(self):
         # Assuming you have a method 'all' in the Colleges class to fetch all colleges
-        college_choices = [(college.code, college.code) for college in Colleges.all()]
+        college_choices = [(college.code, college.code) for college in Colleges.get_all_colleges()]
         self.college_code.choices = [('', '--Select a College--')] + college_choices
+        

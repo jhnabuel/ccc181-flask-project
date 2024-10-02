@@ -1,11 +1,11 @@
 from app import mysql
 
 class Courses(object):
-    def __init__(self, course_code=None, course_name=None, new_code=None, course_college=None):
+    def __init__(self, course_code=None, course_name=None, course_college=None, new_code=None):
         self.code = course_code
         self.name = course_name
-        self.new_code = new_code
         self.college_code = course_college
+        self.new_code = new_code
 
     @classmethod
     def get_all_courses(cls, search_by=None, search_term=None):
@@ -36,3 +36,28 @@ class Courses(object):
         except Exception as e:
             print(f"Error fetching all courses: {e}")
             return []
+        
+    @classmethod
+    def get_by_code(cls, course_code):
+        try:
+            with mysql.connection.cursor() as curs:
+                sql = "SELECT * FROM course_table WHERE course_code = %s"
+                curs.execute(sql, (course_code,))
+                result = curs.fetchone()
+            return cls(*result) if result else None
+        except Exception as e:
+            # Handle the exception
+            print(f"Error fetching course by code: {e}")
+            return None
+        
+    def add_course(self):
+        try:
+            conn = mysql.connection
+            curs = conn.cursor()
+            # Correct SQL statement
+            sql = "INSERT INTO course_table (course_code, course_name, course_college) VALUES (%s, %s, %s)"
+            values = (self.code, self.name, self.college_code)
+            curs.execute(sql, values)
+            conn.commit()
+        except Exception as e:
+            print(f"Error adding course: {e}")
