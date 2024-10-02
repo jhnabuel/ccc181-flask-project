@@ -3,20 +3,33 @@
 {% block content %}
     <div class="container">
         <!-- Search Bar and Add Button -->
-        <h3 class = "table-title">Student List</h3>
+        <h3 class = "table-title">Course List</h3>
         <div class="search-bar">
-            <select id="field" name="course-info" class="form-select-lg" data-selected-value="{{selected_info}}">
-                <option value="course-code">Course Code</option>
-                <option value="course-name">Course Name</option>
-                <option value="course-college">College</option>
-              </select>
-            <input type="text" placeholder="Search course..." id="searchInput" name="search">
-            <button id="searchButton" type ="submit" class="btn btn-secondary">
-                Search Info</button>
-            <button id="addButton" type ="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#mymodal">
-                Add Course Info</button>
+            <form action="{{ url_for('courses.course_page') }}" method="GET"> 
+                <select id="searchBy" name="search_by" class="form-select-lg" data-selected-value="{{ selected_info }}">
+                    <option value="course-code">Course Code</option>
+                    <option value="course-name">Course Name</option>
+                    <option value="course-college">College</option>
+                </select>
+                <input type="text" placeholder="Search course..." id="searchInput" name="search_term" value="{{ request.args.get('search_term', '') }}">
+                <button id="searchButton" type ="submit" class="btn btn-secondary">
+                    Search Info</button>
+                <a href="#" class="btn btn-success pull-right" id="addButton">Add Course</a>
+            </form>
         </div>
         
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mt-1">
+            <ul>
+                {% for category, message in messages %}
+                <li class="alert alert-{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
+
         <div class="table-container">
             <!-- Student Information Table -->
             <table class = "table table-striped">
@@ -29,17 +42,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <td>BSCS</td>
-                    <td>Bachelor of Science in Computer Science</td>
-                    <td>CCS</td>
-                    <td>
-                        <a href="" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit">Edit</a>
-                        <a href="" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete this row?')" >
-                            Delete</a>
-                    </td>
-
-
-                    
+                    {% for course in courses%}
+                        <tr>
+                            <td>{{ course.code }}</td>
+                            <td>{{ course.name }}</td>
+                            <td>{{ course.college_code }}</td>
+                             <td>
+                                <a href="" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#modaledit">Edit</a>
+                                <a href="" class="btn btn-danger btn-xs" onclick="return confirm('Are you sure you want to delete this row?')" >
+                                Delete</a>
+                            </td>
+                        </tr> 
+                        {% endfor %} 
                 </tbody>
             </table>
         </div>
