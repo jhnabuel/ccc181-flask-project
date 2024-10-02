@@ -39,3 +39,22 @@ def add_course():
                 flash('Error: Failed to add course.', 'danger')
 
     return render_template('courses/add_course.html', form=form)
+
+@courses.route("/delete_course/<string:code>", methods=['POST'])
+def delete_course(code):
+    print(f"Attempting to delete college with code: {code}")
+    course = Courses.get_by_code(code)
+    if course is None:
+        print("College not found.")
+        flash('Error: College not found.', 'danger')
+        return redirect(url_for('courses.course_page'))
+
+    try:
+        course.delete_course()
+        flash('Course deleted successfully', 'success')
+        print("Course deleted successfully.")
+    except Exception as e:
+        print(f"Error during deletion: {e}")
+        flash('Error: Failed to delete course.', 'danger')
+
+    return redirect(url_for('courses.course_page'))
