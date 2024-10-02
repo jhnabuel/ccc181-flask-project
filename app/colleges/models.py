@@ -18,7 +18,7 @@ class Colleges(object):
                         sql += " WHERE college_name LIKE %s"
                     elif search_by == 'college-code':
                         sql += " WHERE college_code LIKE %s"
-
+                        
                     search_pattern = f"%{search_term}%"
                     curs.execute(sql, (search_pattern,))
                 else:
