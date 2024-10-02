@@ -2,10 +2,11 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, validators
 from app.colleges.models import Colleges
+from wtforms.validators import DataRequired, ValidationError, Regexp
 
 class CourseForm(FlaskForm):
-    code = StringField('Code', validators=[validators.InputRequired()])
-    name = StringField('Name', validators=[validators.InputRequired()])
+    code = StringField('Code', validators=[DataRequired(), Regexp('^[A-Za-z]+$', message="Course Code must contain only letters.")])
+    name = StringField('Name', validators=[DataRequired(), Regexp('^[A-Za-z\s]+$', message="College Name must contain only letters.")])
     college_code = SelectField('College Code', coerce=str, validators=[validators.InputRequired()])
     new_code = StringField('New Code', validators=[validators.Optional()])
 

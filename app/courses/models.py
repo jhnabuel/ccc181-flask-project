@@ -61,3 +61,13 @@ class Courses(object):
             conn.commit()
         except Exception as e:
             print(f"Error adding course: {e}")
+
+    def delete_course(self):
+        try:
+            conn = mysql.connection
+            with conn.cursor() as curs:  # Automatically closes the cursor after the block
+                sql = "DELETE FROM course_table WHERE course_code = %s"
+                curs.execute(sql, (self.code,))
+                conn.commit()
+        except Exception as e:
+            print(f"Error deleting course: {e}")
