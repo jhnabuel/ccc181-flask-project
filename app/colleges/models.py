@@ -64,10 +64,25 @@ class Colleges(object):
         try:
             conn = mysql.connection
             curs = conn.cursor()
-            # Correct SQL statement
             sql = "DELETE FROM college_table WHERE college_code = %s"
             curs.execute(sql, (self.code,))
             conn.commit()
             curs.close()
         except Exception as e:
             print(f"Error deleting college: {e}")
+
+    def edit_college(self, original_code):
+        try:
+            conn = mysql.connection
+            curs = conn.cursor()
+            sql = "UPDATE college_table SET college_name=%s, college_code=%s WHERE college_code=%s"
+            values = (self.name, self.new_code, original_code)  # Use original code as the WHERE condition
+            print(self.new_code)
+            print(self.name)
+            print(original_code)
+            curs.execute(sql, values)
+            conn.commit()
+            curs.close()
+        except Exception as e:
+            print(f"Error editing college: {e}")
+            raise

@@ -14,7 +14,7 @@ def create_app(test_config=None):
     app.config.from_pyfile('config.py', silent=True)
     
     # Load configuration from environment variables
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', '12341234')
+    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['MYSQL_USER'] = os.getenv('DB_USER')
     app.config['MYSQL_USERNAME'] = os.getenv('DB_USERNAME')
     app.config['MYSQL_PASSWORD'] = os.getenv('DB_PASSWORD')

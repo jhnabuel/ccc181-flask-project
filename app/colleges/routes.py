@@ -56,3 +56,49 @@ def delete_college(code):
         flash('Error: Failed to delete college.', 'danger')
 
     return redirect(url_for('colleges.college_page'))
+
+
+@colleges.route("/edit_college/<code>", methods=['GET', 'POST'])
+def edit_college(code):
+    college = Colleges.get_by_code(code)  # Fetch the college by its code
+    form = CollegeForm(obj=college)  # Pre-populate form with existing data
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_code = form.code.data
+            new_name = form.name.data
+
+            # Check if the code field is empty or None
+            if not new_code:
+                flash('Error: College code cannot be empty.', 'danger')
+                return render_template('college/edit_college.html', form=form, code=code)
+
+            # Check if the code has been changed and if the new code already exists
+            if new_code != code:
+                existing_college = Colleges.get_by_code(new_code)
+                if existing_college:
+                    flash(f'Error: College with code "{new_code}" already exists.', 'danger')
+                    return render_template('college/edit_college.html', form=form, code=code)
+
+            # Proceed with updating the college details
+            college.name = new_name
+            college.new_code = new_code  # Ensure that code is not empty or null
+            try:
+                college.edit_college(code)  # Pass the original code for comparison
+                flash('College updated successfully', 'success')
+                return redirect(url_for('colleges.college_page'))
+
+            except IntegrityError as e:
+                # Handle database integrity errors
+                if "Duplicate entry" in str(e.orig):
+                    flash(f'Error: College with code "{new_code}" already exists.', 'danger')
+                elif "cannot be null" in str(e.orig):
+                    flash('Error: College code cannot be null.', 'danger')
+                else:
+                    flash('Error: Failed to update college.', 'danger')
+                print(f"Error: {e}")  # Log the error details for debugging
+        else:
+            flash('Error: All fields are required.', 'danger')
+            print(form.errors)
+
+    return render_template('college/edit_college.html', form=form, code=code)
