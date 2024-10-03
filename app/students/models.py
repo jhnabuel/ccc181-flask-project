@@ -93,3 +93,13 @@ class Students(object):
             # Handle other exceptions
             print(f"Error adding student: {e}")
             raise
+    
+    def delete_student(self):
+        try:
+            conn = mysql.connection
+            with conn.cursor() as curs:  # Automatically closes the cursor after the block
+                sql = "DELETE FROM student_table WHERE student_id = %s"
+                curs.execute(sql, (self.id_number,))  # Use the correct attribute for the student ID
+                conn.commit()
+        except Exception as e:
+            print(f"Error deleting student: {e}")

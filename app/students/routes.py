@@ -52,3 +52,22 @@ def add_student():
                 flash('Error: Failed to add student.', 'danger')
 
     return render_template('student/add_student.html', form=form)
+
+@students.route("/delete_student/<string:id>", methods=['POST'])
+def delete_student(id):
+    print(f"Attempting to delete student with ID number: {id}")
+    student = Students.get_by_id(id)
+    if student is None:
+        print("Student not found.")
+        flash('Error: Student not found.', 'danger')
+        return redirect(url_for('students.student_page'))
+
+    try:
+        student.delete_student()
+        flash('Student info deleted successfully', 'success')
+        print("Student info deleted successfully.")
+    except Exception as e:
+        print(f"Error during deletion: {e}")
+        flash('Error: Failed to delete student info.', 'danger')
+
+    return redirect(url_for('students.student_page'))
