@@ -71,3 +71,14 @@ class Courses(object):
                 conn.commit()
         except Exception as e:
             print(f"Error deleting course: {e}")
+
+    def edit_course(self):
+        try:
+            conn = mysql.connection
+            curs = conn.cursor()
+            sql = "UPDATE course_table SET course_code=%s, course_name=%s, course_college=%s WHERE course_code=%s"
+            values = (self.new_code, self.name, self.college_code, self.code)
+            curs.execute(sql, values)
+            conn.commit()
+        except Exception as e:
+            print(f"Error editing course: {e}")
