@@ -58,3 +58,51 @@ def delete_course(code):
         flash('Error: Failed to delete course.', 'danger')
 
     return redirect(url_for('courses.course_page'))
+
+@courses.route("/edit_course/<string:code>", methods=['GET','POST'])
+def edit_course(code):
+    course = Courses.get_by_code(code)
+    form = CourseForm(obj=course)
+      # Set the college choices for the SelectField
+    form.set_college_choices()  # Populate the college choices dynamically
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            new_code = form.code.data
+            new_name = form.name.data
+            new_college = form.college_code.data
+            # Check if the code field is empty or None
+            if not new_code:
+                flash('Error: Course code cannot be empty.', 'danger')
+                return render_template('courses/edit_course.html', form=form, code=code)
+
+            # Check if the code has been changed and if the new code already exists
+            if new_code != code:
+                existing_course = Courses.get_by_code(new_code)
+                if existing_course:
+                    flash(f'Error: Course with code "{new_code}" already exists.', 'danger')
+                    return render_template('courses/edit_course.html', form=form, code=code)
+
+            # Proceed with updating the college details
+            course.name = new_name
+            course.new_code = new_code  # Ensure that code is not empty or null
+            course.college_code = new_college
+            try:
+                course.edit_course()  # Pass the original code for comparison
+                flash('Course updated successfully', 'success')
+                return redirect(url_for('courses.course_page'))
+
+            except IntegrityError as e:
+                # Handle database integrity errors
+                if "Duplicate entry" in str(e.orig):
+                    flash(f'Error: Course with code "{new_code}" already exists.', 'danger')
+                elif "cannot be null" in str(e.orig):
+                    flash('Error: Course code cannot be null.', 'danger')
+                else:
+                    flash('Error: Failed to update course.', 'danger')
+                print(f"Error: {e}")  # Log the error details for debugging
+        else:
+            flash('Error: All fields are required.', 'danger')
+            print(form.errors)
+
+
+    return render_template('courses/edit_course.html', form=form, code=code)
