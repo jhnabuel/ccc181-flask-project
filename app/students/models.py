@@ -1,0 +1,44 @@
+from app import mysql
+
+class Students(object):
+    def __init__(self, id_number=None, first_name=None, last_name=None, year_level=None, gender=None, student_course=None):
+        self.id_number = id_number
+        self.first_name = first_name
+        self.last_name = last_name
+        self.year_level = year_level
+        self.gender = gender
+        self.student_course = student_course
+
+    @classmethod
+    def get_all_students(cls, search_by=None, search_term=None):
+        try:
+            # Get a cursor from the existing MySQL connection
+            with mysql.connection.cursor() as curs:
+                sql = "SELECT student_id, student_firstname, student_lastname, student_year, student_gender, student_course FROM student_table"
+
+                if search_term:
+                    if search_by == 'student-id':
+                        sql += " WHERE student_id LIKE %s"
+                    elif search_by == 'student-firstname':
+                        sql += " WHERE student_firstname LIKE %s"
+                    elif search_by == 'student-lastname':
+                        sql += " WHERE student_lastname LIKE %s"
+                    elif search_by == 'student-year':
+                        sql += " WHERE student_year LIKE %s"
+                    elif search_by == 'student-course':
+                        sql += " WHERE student_course LIKE %s"
+                    
+                    search_pattern = f"%{search_term}%"
+                    curs.execute(sql, (search_pattern,))
+                else:
+                    curs.execute(sql)
+
+                student = [cls(id_number=row[0], first_name=row[1], last_name=row[2], year_level=row[3], gender=row[4], student_course=row[5]) for row in curs.fetchall()]
+
+
+            # Return a list of students objects
+            return student
+
+        except Exception as e:
+            print(f"Error fetching all courses: {e}")
+            return []
