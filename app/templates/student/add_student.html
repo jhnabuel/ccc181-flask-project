@@ -1,0 +1,120 @@
+{% extends 'index.html' %}
+
+{% block title %}Student{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+        <div class="mt-3">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    {% endwith %}
+    <!-- End of flash messages -->
+
+    <form method="POST" action="{{ url_for('students.add_student') }}" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}  <!-- Include CSRF token -->
+
+        <!-- ID Year field -->
+        <div class="form-group">
+            {{ form.id_year.label }}
+            {{ form.id_year(class="form-control") }}
+        </div>
+        {% if form.id_year.errors %}
+            <ul class="text-danger">
+                {% for error in form.id_year.errors %}
+                    <li>{{ error }}</li> <!-- Display custom error message for id_year -->
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- ID Unique field -->
+        <div class="form-group">
+            {{ form.id_unique.label }}
+            {{ form.id_unique(class="form-control") }}
+        </div>
+        {% if form.id_unique.errors %}
+            <ul class="text-danger">
+                {% for error in form.id_unique.errors %}
+                    <li>{{ error }}</li> <!-- Display custom error message for id_unique -->
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- First Name field -->
+        <div class="form-group">
+            {{ form.firstname.label }}
+            {{ form.firstname(class="form-control") }}
+        </div>
+        {% if form.firstname.errors %}
+            <ul class="text-danger">
+                {% for error in form.firstname.errors %}
+                    <li>{{ error }}</li> <!-- Display custom error message for firstname -->
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Last Name field -->
+        <div class="form-group">
+            {{ form.lastname.label }}
+            {{ form.lastname(class="form-control") }}
+        </div>
+        {% if form.lastname.errors %}
+            <ul class="text-danger">
+                {% for error in form.lastname.errors %}
+                    <li>{{ error }}</li> <!-- Display custom error message for lastname -->
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Course Code dropdown field -->
+        <div class="form-group">
+            {{ form.course_code.label }}
+            {{ form.course_code(class="form-control") }}
+        </div>
+        {% if form.course_code.errors %}
+            <ul class="text-danger">
+                {% for error in form.course_code.errors %}
+                    <li>{{ error }}</li> <!-- Display custom error message for course_code -->
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Year dropdown field -->
+        <div class="form-group">
+            {{ form.year.label }}
+            {{ form.year(class="form-control") }}
+        </div>
+        {% if form.year.errors %}
+            <ul class="text-danger">
+                {% for error in form.year.errors %}
+                    <li>{{ error }}</li> <!-- Display custom error message for year -->
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Gender dropdown field -->
+        <div class="form-group">
+            {{ form.gender.label }}
+            {{ form.gender(class="form-control") }}
+        </div>
+        {% if form.gender.errors %}
+            <ul class="text-danger">
+                {% for error in form.gender.errors %}
+                    <li>{{ error }}</li> <!-- Display custom error message for gender -->
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <!-- Submit and Cancel buttons -->
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="{{ url_for('students.student_page') }}" class="btn btn-secondary">Cancel</a>
+    </form>
+    <!-- End of form section -->
+</div>
+{% endblock %}
