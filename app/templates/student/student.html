@@ -16,7 +16,7 @@
                 <input type="text" placeholder="Search student..." id="searchInput" name="search_term" value="{{ request.args.get('search_term', '') }}">
                 <button id="searchButton" type ="submit" class="btn btn-secondary">
                     Search Info</button>
-                <a href="{{ url_for('courses.add_course') }}" class="btn btn-success pull-right" id="addButton">Add Student</a>
+                <a href="{{ url_for('students.add_student') }}" class="btn btn-success pull-right" id="addButton">Add Student</a>
             </form>
         </div>
 

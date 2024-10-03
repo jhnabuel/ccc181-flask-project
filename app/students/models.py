@@ -42,3 +42,54 @@ class Students(object):
         except Exception as e:
             print(f"Error fetching all courses: {e}")
             return []
+        
+    @classmethod
+    def get_by_id(cls, student_id):
+        try:
+            # Get a cursor from the existing MySQL connection
+            with mysql.connection.cursor() as curs:
+                # Query to fetch a student by ID
+                sql = "SELECT * FROM student_table WHERE student_id = %s"
+                curs.execute(sql, (student_id,))
+                
+                # Fetch one result
+                result = curs.fetchone()
+
+            # Return an instance of Students if a result is found, otherwise None
+            return cls(*result) if result else None
+
+        except Exception as e:
+            # Handle exceptions by printing the error and returning None
+            print(f"Error fetching student by ID: {e}")
+            return None
+    
+    def add_student(self):
+        try:
+            # Get a cursor from the existing MySQL connection
+            with mysql.connection.cursor() as curs:
+                # SQL query to insert student data into the table
+                sql = """
+                INSERT INTO student_table (student_id, student_firstname, student_lastname, student_year, student_gender, student_course)
+                VALUES (%s, %s, %s, %s, %s, %s)
+                """
+                
+                # Execute the SQL query with the object's data
+                curs.execute(sql, (
+                    self.id_number,
+                    self.first_name,
+                    self.last_name,
+                    self.year_level,
+                    self.gender,
+                    self.student_course
+                ))
+                
+                # Commit the transaction to make changes persistent
+                mysql.connection.commit()
+
+                print("Student added successfully!")
+
+
+        except Exception as e:
+            # Handle other exceptions
+            print(f"Error adding student: {e}")
+            raise
