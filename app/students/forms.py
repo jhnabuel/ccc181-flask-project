@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SelectField, validators
 from wtforms.validators import DataRequired, ValidationError, Regexp, Length
 from app.courses.models import Courses
+
 class StudentForm(FlaskForm):
     # id_year must be exactly 4 digits, and id_unique can accept any integer.
     id_year = StringField('ID Year', validators=[
@@ -40,3 +41,6 @@ class StudentForm(FlaskForm):
         # Assuming you have a method 'all' in the Courses class to fetch all courses.
         course_choices = [(course.code, course.code) for course in Courses.get_all_courses()]
         self.course_code.choices = [('', '--Select a Course--')] + course_choices
+
+    def set_year_choices(self):
+        self.year.choices = [('', 'Please select a year'), ('1', '1st Year'), ('2', '2nd Year'), ('3', '3rd Year'), ('4', '4th Year')]
