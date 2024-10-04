@@ -103,3 +103,21 @@ class Students(object):
                 conn.commit()
         except Exception as e:
             print(f"Error deleting student: {e}")
+
+    def edit_student(self):
+        try:
+            conn = mysql.connection
+            with conn.cursor() as curs:
+                sql = """
+                    UPDATE student_table 
+                    SET student_firstname=%s, student_lastname=%s, student_year=%s, student_gender=%s, student_course=%s 
+                    WHERE student_id=%s
+                """
+                values = (self.first_name, self.last_name, self.year_level, self.gender, self.student_course, self.id_number)
+                print("Executing SQL:", sql)
+                print("With values:", values)
+                curs.execute(sql, values)
+                conn.commit()
+        except Exception as e:
+            print(f"Error editing student: {e}")
+
