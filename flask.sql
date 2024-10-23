@@ -23,7 +23,8 @@ USE `ssis_web`;
 CREATE TABLE IF NOT EXISTS `college_table` (
   `college_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `college_name` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`college_code`)
+  PRIMARY KEY (`college_code`),
+  UNIQUE KEY `college_code` (`college_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- Dumping data for table ssis_web.college_table: ~7 rows (approximately)
@@ -41,22 +42,36 @@ CREATE TABLE IF NOT EXISTS `course_table` (
   `course_code` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `course_name` varchar(50) DEFAULT NULL,
   `course_college` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`course_code`)
+  PRIMARY KEY (`course_code`),
+  UNIQUE KEY `course_code` (`course_code`),
+  KEY `course_college` (`course_college`),
+  CONSTRAINT `course_college` FOREIGN KEY (`course_college`) REFERENCES `college_table` (`college_code`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table ssis_web.course_table: ~0 rows (approximately)
+-- Dumping data for table ssis_web.course_table: ~2 rows (approximately)
+INSERT IGNORE INTO `course_table` (`course_code`, `course_name`, `course_college`) VALUES
+	('BSCA', 'Bachelor of Science in Computer Applications', 'CCS'),
+	('BSCS', 'Bachelors of Science in Computer Science', 'CCS');
 
 -- Dumping structure for table ssis_web.student_table
 CREATE TABLE IF NOT EXISTS `student_table` (
   `student_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `student_name` varchar(50) DEFAULT NULL,
-  `student_year` int DEFAULT NULL,
+  `student_firstname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `student_lastname` varchar(50) DEFAULT NULL,
+  `student_year` varchar(50) DEFAULT NULL,
   `student_gender` varchar(50) DEFAULT NULL,
   `student_course` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`student_id`)
+  PRIMARY KEY (`student_id`),
+  UNIQUE KEY `student_id` (`student_id`),
+  KEY `student_course` (`student_course`),
+  CONSTRAINT `student_course` FOREIGN KEY (`student_course`) REFERENCES `course_table` (`course_code`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- Dumping data for table ssis_web.student_table: ~0 rows (approximately)
+-- Dumping data for table ssis_web.student_table: ~3 rows (approximately)
+INSERT IGNORE INTO `student_table` (`student_id`, `student_firstname`, `student_lastname`, `student_year`, `student_gender`, `student_course`) VALUES
+	('2021-2525', 'John', 'Reddington', '4', 'Others', 'BSCS'),
+	('2022-0001', 'Raymond', 'Reddington', '3', 'Male', 'BSCS'),
+	('2023-0005', 'Jake', 'Peralta', '1', 'Male', 'BSCS');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
