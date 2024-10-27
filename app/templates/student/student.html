@@ -35,7 +35,7 @@
         
         <div class="table-container">
             <!-- Student Information Table -->
-            <table class = "table table-striped">
+            <table class = "table table-hover table-striped">
                 <thead class = "bg-primary text-white">
                     <tr>
                         <th scope = "col">ID Number</th>
@@ -55,7 +55,7 @@
                             <td>{{ student.last_name }}</td>
                             <td>{{ student.year_level }}</td>
                             <td>{{ student.gender }}</td>
-                            <td>{{ student.course_code if student.course_code else "Unenrolled" }}</td>
+                            <td>{{ student.student_course if student.student_course else "Unenrolled" }}</td>
                             <td>
                                 <a href="{{ url_for('students.edit_student', id=student.id_number) }}" class="btn btn-warning btn-xs mr-2">Edit</a>
                                 <form method="POST" action="{{ url_for('students.delete_student', id=student.id_number) }}" style="display: inline-block;">

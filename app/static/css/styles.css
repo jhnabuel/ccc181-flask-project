@@ -9,6 +9,7 @@ label {
 }
 /* Dark background for navbar */
 .navbar {
+    width: 100%;
     background-color: #363636;
   }
   
@@ -17,14 +18,11 @@ label {
     color: #F0F0F0 !important;
     font-weight: bold;
     margin-left: 100px;
-    margin-right: 400px;
   }
   
   /* Navbar link styling */
 .navbar-nav .nav-link {
     color: #F0F0F0 !important;
-    padding: 10px 20px;
-    margin-right: 20px;
   }
   
   /* Navbar link hover effect */
