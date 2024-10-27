@@ -4,6 +4,8 @@ from app.students.forms import StudentForm
 from . import students  # Import the students Blueprint from __init__.py
 from app import mysql
 from pymysql import IntegrityError
+import cloudinary, cloudinary.uploader
+from cloudinary.uploader import upload
 
 # Define a route for '/student' under the students blueprint
 @students.route('/student', methods=['GET'])
@@ -14,15 +16,54 @@ def student_page():
     students_list = Students.get_all_students(search_by, search_term)
     return render_template('student/student.html', students=students_list, selected_info=search_by, search_term=search_term)
 
+def is_image_file(filename):
+    allowed_extensions = {'jpg', 'jpeg', 'png', 'svg'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
+
+def is_file_size_valid(file_field):
+    try:
+        file_size = len(file_field.read())
+        file_field.seek(0)  # Reset file cursor position
+        max_size = 1024 * 1024  # 1 MB
+
+        if file_size > max_size:
+            return False
+        else:
+            return True
+    except Exception as e:
+        print(f"Error checking file size: {e}")
+        return False
+
 @students.route("/add_student", methods=['POST', 'GET'])
 def add_student():
     form = StudentForm()
+    
 
     # Load the courses for the dropdown
     form.set_course_choices()
 
     if request.method == 'POST':
+        if form.image_url.data and not is_image_file(form.image_url.data.filename):
+            flash('Error: Only image files (jpg, jpeg, png, svg) are allowed for the photo.', 'danger')
+            return render_template('student/add_student.html', form=form)
+        # Check file-related conditions before calling validate_on_submit
+        if not is_file_size_valid(form.image_url.data):
+            flash('Error: File size must be no more than 1 MB.', 'danger')
+            return render_template('student/add_student.html', form=form)
+
         if form.validate_on_submit():
+            
+            image_url = None
+            if form.image_url.data:
+                    try:
+                        # Use cloudinary.uploader.upload directly
+                        response = cloudinary.uploader.upload(form.image_url.data, folder="student_photo")
+                        image_url = response['secure_url']
+                    except Exception as e:
+                        flash(f'Error: Cloudinary upload failed. {e}', 'danger')
+                        return render_template('student/add_student.html', form=form)
+                    
             # Combine id_year and id_unique to form student_id
             student_id = f"{form.id_year.data}-{form.id_unique.data}"
 
@@ -39,7 +80,8 @@ def add_student():
                 last_name=form.lastname.data,   
                 year_level=form.year.data,
                 gender=form.gender.data,
-                student_course=form.course_code.data
+                student_course=form.course_code.data,
+                image_url=image_url
             )
 
             try:

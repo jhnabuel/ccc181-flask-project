@@ -1,20 +1,21 @@
 from app import mysql
-
+import cloudinary.uploader
 class Students(object):
-    def __init__(self, id_number=None, first_name=None, last_name=None, year_level=None, gender=None, student_course=None):
+    def __init__(self, id_number=None, first_name=None, last_name=None, year_level=None, gender=None, student_course=None, image_url=None):
         self.id_number = id_number
         self.first_name = first_name
         self.last_name = last_name
         self.year_level = year_level
         self.gender = gender
         self.student_course = student_course
+        self.image_url = image_url
 
     @classmethod
     def get_all_students(cls, search_by=None, search_term=None):
         try:
             # Get a cursor from the existing MySQL connection
             with mysql.connection.cursor() as curs:
-                sql = "SELECT student_id, student_firstname, student_lastname, student_year, student_gender, student_course FROM student_table"
+                sql = "SELECT student_id, student_firstname, student_lastname, student_year, student_gender, student_course, image_url FROM student_table"
 
                 if search_term:
                     if search_by == 'student-id':
@@ -33,7 +34,7 @@ class Students(object):
                 else:
                     curs.execute(sql)
 
-                student = [cls(id_number=row[0], first_name=row[1], last_name=row[2], year_level=row[3], gender=row[4], student_course=row[5]) for row in curs.fetchall()]
+                student = [cls(id_number=row[0], first_name=row[1], last_name=row[2], year_level=row[3], gender=row[4], student_course=row[5], image_url=row[6]) for row in curs.fetchall()]
 
 
             # Return a list of students objects
@@ -69,12 +70,13 @@ class Students(object):
             with mysql.connection.cursor() as curs:
                 # SQL query to insert student data into the table
                 sql = """
-                INSERT INTO student_table (student_id, student_firstname, student_lastname, student_year, student_gender, student_course)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO student_table (image_url, student_id, student_firstname, student_lastname, student_year, student_gender, student_course)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
                 
                 # Execute the SQL query with the object's data
                 curs.execute(sql, (
+                    self.image_url,
                     self.id_number,
                     self.first_name,
                     self.last_name,

@@ -19,7 +19,7 @@
 
     <form method="POST" action="{{ url_for('students.edit_student', id=student.id_number) }}" enctype="multipart/form-data">
         {{ form.hidden_tag() }}  <!-- Include CSRF token -->
-    
+        
         <!-- ID Year field (Read-only) -->
         <div class="form-group">
             {{ form.id_year.label }}

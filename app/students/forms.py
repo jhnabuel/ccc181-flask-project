@@ -1,9 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, validators
+from wtforms import StringField, SelectField, validators, FileField
+from flask_wtf.file import FileAllowed
 from wtforms.validators import DataRequired, ValidationError, Regexp, Length
 from app.courses.models import Courses
 
 class StudentForm(FlaskForm):
+     # Image uploader for student photo.
+    image_url = FileField('Choose an Image', validators=[validators.Optional(), FileAllowed(['jpg', 'jpeg', 'png', 'svg'], 'Images only!')
+    ])
+
     # id_year must be exactly 4 digits, and id_unique can accept any integer.
     id_year = StringField('ID Year', validators=[
         DataRequired(), 
@@ -36,6 +41,7 @@ class StudentForm(FlaskForm):
     gender = SelectField('Gender', validators=[DataRequired()], choices=[
         ('Male', 'Male'), ('Female', 'Female'), ('Non-binary', 'Non-binary'), ('Others', 'Others')
     ])
+
 
     def set_course_choices(self):
         # Assuming you have a method 'all' in the Courses class to fetch all courses.

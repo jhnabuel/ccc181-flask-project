@@ -5,6 +5,7 @@ from flask_mysqldb import MySQL
 from flask_wtf.csrf import CSRFProtect
 import mysql.connector
 import os
+from config import configure_cloudinary
 
 mysql = MySQL()
 csrf = CSRFProtect()
@@ -23,6 +24,7 @@ def create_app(test_config=None):
 
     csrf.init_app(app)
     mysql.init_app(app)
+    configure_cloudinary(app)
     
 
     # Routing the master template (index.html) directly

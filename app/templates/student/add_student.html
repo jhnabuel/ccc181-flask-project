@@ -19,6 +19,10 @@
 
     <form method="POST" action="{{ url_for('students.add_student') }}" enctype="multipart/form-data">
         {{ form.hidden_tag() }}  <!-- Include CSRF token -->
+        <div class="form-group">
+            {{ form.image_url.label(class="form-label") }}
+            {{ form.image_url(class="form-control", type="file") }}
+        </div>      
 
         <!-- ID Year field -->
         <div class="form-group">
