@@ -17,11 +17,18 @@
     {% endwith %}
     <!-- End of flash messages -->
 
-    <form method="POST" action="{{ url_for('students.add_student') }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('students.add_student') }}" enctype="multipart/form-data" class="shadow-lg p-4 rounded">
         {{ form.hidden_tag() }}  <!-- Include CSRF token -->
         <div class="form-group">
+            <label for="image-preview">Student Image</label>
+            <br>
+            <img id="image_preview" src="https://res.cloudinary.com/dzmgvynf3/image/upload/v1234567890/student_photo/placeholder.jpg" class="img-thumbnail" style="width: 200px; height: 250px; display: block; margin: auto;">
+        </div>
+
+        <!-- Add Student Photo -->
+        <div class="form-group mb-3">
             {{ form.image_url.label(class="form-label") }}
-            {{ form.image_url(class="form-control", type="file") }}
+            {{ form.image_url(class="form-control", type="file", id="image_url") }}
         </div>      
 
         <!-- ID Year field -->
@@ -121,4 +128,6 @@
     </form>
     <!-- End of form section -->
 </div>
+
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}
