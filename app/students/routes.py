@@ -49,7 +49,7 @@ def add_student():
             return render_template('student/add_student.html', form=form)
         # Check file-related conditions before calling validate_on_submit
         if not is_file_size_valid(form.image_url.data):
-            flash('Error: File size must be no more than 1 MB.', 'danger')
+            flash('Error: File size must be no more than 1 MB.', 'danger')      
             return render_template('student/add_student.html', form=form)
 
         if form.validate_on_submit():
@@ -63,6 +63,8 @@ def add_student():
                     except Exception as e:
                         flash(f'Error: Cloudinary upload failed. {e}', 'danger')
                         return render_template('student/add_student.html', form=form)
+            else:
+                image_url = "https://res.cloudinary.com/dzmgvynf3/image/upload/v1234567890/student_photo/placeholder.jpg"
                     
             # Combine id_year and id_unique to form student_id
             student_id = f"{form.id_year.data}-{form.id_unique.data}"
@@ -135,8 +137,57 @@ def edit_student(id):
     # Set the course choices for the dropdown
     form.set_course_choices()
 
-    if request.method == 'POST':
+    if request.method == "POST":
+        if form.image_url.data:
+            if not is_image_file(form.image_url.data.filename):
+                flash('Error: Only image files (jpg, jpeg, png, svg) are allowed for the photo.', 'danger')
+                return render_template('student/edit_student.html', form=form, student=student, id=id, image_url=student.image_url)
+            
+            if not is_file_size_valid(form.image_url.data):
+                flash('Error: File size must be no more than 1 MB.', 'danger')
+                return render_template('student/edit_student.html', form=form, student=student, id=id, image_url=student.image_url)
+
         if form.validate_on_submit():
+            # Initialize image_url to retain the current image by default
+            image_url = student.image_url
+            placeholder_url = 'https://res.cloudinary.com/dzmgvynf3/image/upload/v1234567890/student_photo/placeholder.jpg'
+            # Determine whether to set to placeholder or a new URL
+            image_url = student.image_url
+
+            # Check if a new image is uploaded
+            if form.image_url.data and image_url != placeholder_url:
+                # Flash an error if the user hasn't clicked the remove button
+                if request.form.get("remove_image") != "true":
+                    flash("Please remove the current photo before uploading a new one.", "danger")
+                    return render_template('student/edit_student.html', form=form, student=student, image_url=image_url)
+
+            if form.image_url.data != image_url:
+                if request.form.get("remove_image") == "true":  # Remove existing image
+                    if student.image_url != placeholder_url:
+                        parts = student.image_url.split('/')
+                        if 'student_photo' in parts:
+                            filename = parts[-1]
+                            public_id = filename.split('.')[0]
+                            full_public_id = f"student_photo/{public_id}"
+                            try:
+                                cloudinary.uploader.destroy(full_public_id)
+                            except Exception as e:
+                                flash(f'Error occurred while trying to delete the image: {e}', 'danger')
+                    image_url = placeholder_url
+                
+            
+            # Check if a new image is uploaded after removing
+            if form.image_url.data and request.form.get("remove_image") == "true":
+                response = cloudinary.uploader.upload(form.image_url.data, folder="student_photo")
+                image_url = response['secure_url']
+            
+            # Upload if photo of student is placeholder photo
+            if image_url == placeholder_url:
+                if form.image_url.data:
+                    response = cloudinary.uploader.upload(form.image_url.data, folder="student_photo")
+                    image_url = response['secure_url']
+
+            
             print("Form Data:", form.data)  # Check submitted data
             try:
                 # Update the student object with the new data
@@ -146,10 +197,10 @@ def edit_student(id):
                 student.year_level = form.year.data
                 student.gender = form.gender.data
                 student.student_course = form.course_code.data
-                
+                student.image_url = image_url
+
                 # Save the updated student object
                 student.edit_student()
-
                 flash('Student updated successfully', 'success')
                 return redirect(url_for('students.student_page'))
 
@@ -160,13 +211,11 @@ def edit_student(id):
                     flash('Error: Failed to update student.', 'danger')
                 # Rollback any changes if an integrity error occurs
                 mysql.connection.rollback()
-
         else:
             flash('Error: Please correct the form errors and try again.', 'danger')
             print(form.errors)
 
-    return render_template('student/edit_student.html', form=form, student=student, id=id)
-
+    return render_template('student/edit_student.html', form=form, student=student, id=id, image_url=student.image_url)
 
 
 

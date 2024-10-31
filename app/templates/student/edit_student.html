@@ -17,8 +17,26 @@
     {% endwith %}
     <!-- End of flash messages -->
 
-    <form method="POST" action="{{ url_for('students.edit_student', id=student.id_number) }}" enctype="multipart/form-data">
+    <form method="POST" action="{{ url_for('students.edit_student', id=student.id_number) }}" enctype="multipart/form-data" class="shadow-lg p-4 rounded">
         {{ form.hidden_tag() }}  <!-- Include CSRF token -->
+
+        <div class="form-group">
+            <label for="image-preview">Student Image</label>
+            <br>
+            <img id="image_preview" src="{{ image_url }}" class="img-thumbnail" style="width: 200px; height: 250px; display: block; margin: auto;">
+        </div>
+
+        <button type="button" class="btn btn-danger mt-2" id="remove_photo_btn" style="display: flex; justify-content: center;">Remove Current Photo</button>
+
+        <!-- Hidden field to indicate if the image should be removed -->
+        <input type="hidden" name="remove_image" id="remove_image" value="false">
+
+
+        <!--Student Photo Field-->
+        <div class="form-group">
+            {{form.image_url.label(class="form-label")}}
+            {{ form.image_url(class="form-control", type="file", id="image_url") }}
+        </div>
         
         <!-- ID Year field (Read-only) -->
         <div class="form-group">
@@ -118,4 +136,5 @@
     
     <!-- End of form section -->
 </div>
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
 {% endblock %}

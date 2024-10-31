@@ -1,7 +1,7 @@
 from app import mysql
 import cloudinary.uploader
 class Students(object):
-    def __init__(self, id_number=None, first_name=None, last_name=None, year_level=None, gender=None, student_course=None, image_url=None):
+    def __init__(self, id_number=None, first_name=None, last_name=None, year_level=None, gender=None, student_course=None, image_url=None,):
         self.id_number = id_number
         self.first_name = first_name
         self.last_name = last_name
@@ -112,10 +112,12 @@ class Students(object):
             with conn.cursor() as curs:
                 sql = """
                     UPDATE student_table 
-                    SET student_firstname=%s, student_lastname=%s, student_year=%s, student_gender=%s, student_course=%s 
+                    SET student_firstname=%s, student_lastname=%s, student_year=%s, student_gender=%s, student_course=%s,
+                    image_url=%s
                     WHERE student_id=%s
                 """
-                values = (self.first_name, self.last_name, self.year_level, self.gender, self.student_course, self.id_number)
+                values = (self.first_name, self.last_name, self.year_level, self.gender, self.student_course, 
+                          self.image_url, self.id_number)
                 print("Executing SQL:", sql)
                 print("With values:", values)
                 curs.execute(sql, values)
