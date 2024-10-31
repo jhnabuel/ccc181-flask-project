@@ -53,7 +53,7 @@
                         <tr>
                             <td>
                                 {% if student.image_url %}
-                                <img src="{{ student.image_url }}" alt="Student Image" width="40" height="40" style="object-fit: cover; border-radius: 50px;">
+                                <img src="{{ student.image_url }}" alt="Student Image" width="40" height="40" style="object-fit: cover; border-radius: 50px;" onclick="openModal('{{ student.image_url }}')">
                                 {% else %}
                                 No Image
                                 {% endif %} 
@@ -76,5 +76,22 @@
                 </tbody>
             </table>
         </div>
+
+                <!-- Bootstrap Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content text-white" style="background-color: #1e1e1e;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="imageModalLabel">Student Image</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex justify-content-center align-items-center">
+                        <img id="modalImage" src="" alt="Student Image" class="img-fluid" style="max-width: 100%; max-height: 100%;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
     </div>
 {% endblock %}

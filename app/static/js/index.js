@@ -1,5 +1,3 @@
-document.getElementById('image_url').addEventListener('change', previewImage);
-
 function previewImage(event) {
     const imagePreview = document.getElementById('image_preview');
     const file = event.target.files[0];
@@ -7,7 +5,7 @@ function previewImage(event) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            imagePreview.src = e.target.result;
+            imagePreview.src = e.target.result; // Set the image preview to the uploaded file
         };
         reader.readAsDataURL(file);
     } else {
@@ -21,14 +19,22 @@ document.addEventListener("DOMContentLoaded", function() {
     const removeImageInput = document.getElementById('remove_image');
     const fileInput = document.getElementById('image_url');
 
-    removePhotoButton.addEventListener('click', function() {
-        // Set the hidden input to true to mark the image for removal
-        removeImageInput.value = "true";
+    if (removePhotoButton) { // Ensure the button exists before adding the event listener
+        removePhotoButton.addEventListener('click', function() {
+            // Set the hidden input to true to mark the image for removal
+            removeImageInput.value = "true";
 
-        // Update the preview to the placeholder image
-        imagePreview.src = 'https://res.cloudinary.com/dzmgvynf3/image/upload/v1234567890/student_photo/placeholder.jpg';
+            // Update the preview to the placeholder image
+            imagePreview.src = 'https://res.cloudinary.com/dzmgvynf3/image/upload/v1234567890/student_photo/placeholder.jpg';
 
-        // Clear the file input
-        fileInput.value = '';
-    });
+            // Clear the file input
+            fileInput.value = '';
+        });
+    }
 });
+
+function openModal(imageUrl) {
+    document.getElementById('modalImage').src = imageUrl;
+    var myModal = new bootstrap.Modal(document.getElementById('imageModal'));
+    myModal.show();
+}
