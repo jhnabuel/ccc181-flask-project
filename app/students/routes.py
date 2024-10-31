@@ -105,7 +105,17 @@ def delete_student(id):
         print("Student not found.")
         flash('Error: Student not found.', 'danger')
         return redirect(url_for('students.student_page'))
-
+    placeholder_url = 'https://res.cloudinary.com/dzmgvynf3/image/upload/v1234567890/student_photo/placeholder.jpg'
+    if student.image_url != placeholder_url:
+        parts = student.image_url.split('/')
+        if 'student_photo' in parts:
+                filename = parts[-1]
+                public_id = filename.split('.')[0]
+                full_public_id = f"student_photo/{public_id}"
+                try:
+                    cloudinary.uploader.destroy(full_public_id)
+                except Exception as e:
+                    flash(f'Error occurred while trying to delete the image: {e}', 'danger')
     try:
         student.delete_student()
         flash('Student info deleted successfully', 'success')
