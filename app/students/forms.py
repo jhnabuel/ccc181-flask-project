@@ -30,7 +30,7 @@ class StudentForm(FlaskForm):
     ])
     
     # Course code is a dropdown populated dynamically from the Courses model.
-    course_code = SelectField('Course Code', coerce=str, validators=[DataRequired()])
+    course_code = SelectField('Course Name', coerce=str, validators=[DataRequired()])
     
     # Year dropdown with fixed choices.
     year = SelectField('Year', validators=[DataRequired()], choices=[
@@ -45,7 +45,7 @@ class StudentForm(FlaskForm):
 
     def set_course_choices(self):
         # Assuming you have a method 'all' in the Courses class to fetch all courses.
-        course_choices = [(course.code, course.code) for course in Courses.get_all_courses()]
+        course_choices = [(course.code, course.name) for course in Courses.get_all_courses()]
         self.course_code.choices = [('', '--Select a Course--')] + course_choices
 
     def set_year_choices(self):

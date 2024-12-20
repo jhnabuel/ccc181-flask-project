@@ -70,7 +70,7 @@ label {
   margin-right: 10px; /* Space between input and button */
   font-size: 16px; /* Make the font size slightly larger */
   min-width: 200px; /* Set a minimum width to avoid shrinking */
-  width: 620px;
+  width: 680px;
   height: 40px;
 }
 
@@ -83,6 +83,9 @@ label {
   white-space: nowrap; /* Prevent the button text from wrapping */
 }
 
+.container {
+  width: 2000px;
+}
 .table-container {
   width: 100%;
   overflow-x: auto; /* Enables horizontal scroll on small screens */

@@ -14,6 +14,7 @@ def student_page():
     search_by = request.args.get('search_by', 'student-id')  # Default to 'course-name'
 
     students_list = Students.get_all_students(search_by, search_term)
+    print(students_list)
     return render_template('student/student.html', students=students_list, selected_info=search_by, search_term=search_term)
 
 def is_image_file(filename):

@@ -15,19 +15,33 @@ class Students(object):
         try:
             # Get a cursor from the existing MySQL connection
             with mysql.connection.cursor() as curs:
-                sql = "SELECT student_id, student_firstname, student_lastname, student_year, student_gender, student_course, image_url FROM student_table"
+                sql = """
+                    SELECT 
+                        s.student_id, 
+                        s.student_firstname, 
+                        s.student_lastname, 
+                        s.student_year, 
+                        s.student_gender, 
+                        c.course_name AS student_course, 
+                        s.image_url 
+                    FROM student_table AS s
+                    LEFT JOIN course_table AS c
+                    ON s.student_course = c.course_code
+                    
+                    
+                    """
 
                 if search_term:
                     if search_by == 'student-id':
-                        sql += " WHERE student_id LIKE %s"
+                        sql += " WHERE s.student_id LIKE %s"
                     elif search_by == 'student-firstname':
-                        sql += " WHERE student_firstname LIKE %s"
+                        sql += " WHERE s.student_firstname LIKE %s"
                     elif search_by == 'student-lastname':
-                        sql += " WHERE student_lastname LIKE %s"
+                        sql += " WHERE s.student_lastname LIKE %s"
                     elif search_by == 'student-year':
-                        sql += " WHERE student_year LIKE %s"
-                    elif search_by == 'student-course':
-                        sql += " WHERE student_course LIKE %s"
+                        sql += " WHERE s.student_year LIKE %s"
+                    elif search_by == 'course-name':
+                        sql += " WHERE c.course_name LIKE %s"
                     
                     search_pattern = f"%{search_term}%"
                     curs.execute(sql, (search_pattern,))
@@ -36,7 +50,7 @@ class Students(object):
 
                 student = [cls(id_number=row[0], first_name=row[1], last_name=row[2], year_level=row[3], gender=row[4], student_course=row[5], image_url=row[6]) for row in curs.fetchall()]
 
-
+                
             # Return a list of students objects
             return student
 
