@@ -28,7 +28,6 @@ class Students(object):
                     LEFT JOIN course_table AS c
                     ON s.student_course = c.course_code
                     
-                    
                     """
 
                 if search_term:
@@ -48,7 +47,8 @@ class Students(object):
                 else:
                     curs.execute(sql)
 
-                student = [cls(id_number=row[0], first_name=row[1], last_name=row[2], year_level=row[3], gender=row[4], student_course=row[5], image_url=row[6]) for row in curs.fetchall()]
+                student = [cls(id_number=row[0], first_name=row[1], last_name=row[2], year_level=row[3], 
+                               gender=row[4], student_course=row[5], image_url=row[6]) for row in curs.fetchall()]
 
                 
             # Return a list of students objects

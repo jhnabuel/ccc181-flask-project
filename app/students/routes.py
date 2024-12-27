@@ -132,7 +132,7 @@ def delete_student(id):
 def edit_student(id):
     student = Students.get_by_id(id)  # Fetch the student using their ID
     form = StudentForm()  # Initialize the form
-
+    # Populate the Student Data Form fetched from the database
     # Split the ID number into year and unique parts
     if request.method == "GET":
         if student and student.id_number:  # Ensure the student and id_number are valid
