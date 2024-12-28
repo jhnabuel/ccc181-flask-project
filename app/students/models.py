@@ -11,7 +11,7 @@ class Students(object):
         self.image_url = image_url
 
     @classmethod
-    def get_all_students(cls, search_by=None, search_term=None):
+    def get_all_students(cls, search_by=None, search_term=None, offset=0, limit=10):
         try:
             # Get a cursor from the existing MySQL connection
             with mysql.connection.cursor() as curs:
@@ -22,30 +22,43 @@ class Students(object):
                         s.student_lastname, 
                         s.student_year, 
                         s.student_gender, 
-                        c.course_name AS student_course, 
+                        CONCAT(c.course_code, ' (', cl.college_name, ')') AS student_course, 
                         s.image_url 
                     FROM student_table AS s
                     LEFT JOIN course_table AS c
                     ON s.student_course = c.course_code
+                    LEFT JOIN college_table AS cl
+                    ON c.course_college = cl.college_code
                     
                     """
+                params = []
 
                 if search_term:
+                    search_pattern = f"%{search_term}%"
                     if search_by == 'student-id':
                         sql += " WHERE s.student_id LIKE %s"
+                        params.append(search_pattern)
                     elif search_by == 'student-firstname':
                         sql += " WHERE s.student_firstname LIKE %s"
+                        params.append(search_pattern)
                     elif search_by == 'student-lastname':
                         sql += " WHERE s.student_lastname LIKE %s"
+                        params.append(search_pattern)
                     elif search_by == 'student-year':
                         sql += " WHERE s.student_year LIKE %s"
-                    elif search_by == 'course-name':
-                        sql += " WHERE c.course_name LIKE %s"
-                    
-                    search_pattern = f"%{search_term}%"
-                    curs.execute(sql, (search_pattern,))
-                else:
-                    curs.execute(sql)
+                        params.append(search_pattern)
+                    elif search_by == 'course-and-college':
+                        sql += " WHERE (c.course_code LIKE %s OR cl.college_name LIKE %s)"
+                        params.append(search_pattern)
+                        params.append(search_pattern)
+            
+                    # Apply LIMIT and OFFSET
+                sql += " LIMIT %s OFFSET %s"
+                params.append(limit)
+                params.append(offset)
+
+                # Execute the query with the parameters
+                curs.execute(sql, tuple(params))
 
                 student = [cls(id_number=row[0], first_name=row[1], last_name=row[2], year_level=row[3], 
                                gender=row[4], student_course=row[5], image_url=row[6]) for row in curs.fetchall()]
@@ -55,9 +68,49 @@ class Students(object):
             return student
 
         except Exception as e:
-            print(f"Error fetching all courses: {e}")
+            print(f"Error fetching all students: {e}")
             return []
-        
+    
+    @classmethod
+    def get_total_students(cls, search_by=None, search_term=None):
+        try:
+            with mysql.connection.cursor() as curs:
+                sql = """
+                    SELECT COUNT(*) 
+                    FROM student_table AS s
+                    LEFT JOIN course_table AS c
+                    ON s.student_course = c.course_code
+                    LEFT JOIN college_table AS cl
+                    ON c.course_college = cl.college_code
+                """
+
+                if search_term:
+                    search_pattern = f"%{search_term}%"
+                    if search_by == 'student-id':
+                        sql += " WHERE s.student_id LIKE %s"
+                    elif search_by == 'student-firstname':
+                        sql += " WHERE s.student_firstname LIKE %s"
+                    elif search_by == 'student-lastname':
+                        sql += " WHERE s.student_lastname LIKE %s"
+                    elif search_by == 'student-year':
+                        sql += " WHERE s.student_year LIKE %s"
+                    elif search_by == 'course-and-college':
+                        sql += " WHERE (c.course_code LIKE %s OR cl.college_name LIKE %s)"
+                    curs.execute(sql, (search_pattern, search_pattern) if search_by == 'course-and-college' else (search_pattern,))
+                else:
+                    curs.execute(sql)
+
+                result = curs.fetchone()
+                return result[0] if result else 0
+
+        except Exception as e:
+            print(f"Error fetching total number of students: {e}")
+            return 0
+
+
+
+
+
     @classmethod
     def get_by_id(cls, student_id):
         try:

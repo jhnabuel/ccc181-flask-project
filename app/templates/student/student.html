@@ -6,19 +6,20 @@
         <h3 class = "table-title">Student List</h3>
         <div class="search-bar">
             <form action="{{ url_for('students.student_page') }}" method="GET">
-                <select id="searchBy" name="search_by" class="form-select-lg" data-selected-value="{{selected_info}}">
-                    <option value="student-id">ID Number</option>
-                    <option value="student-firstname">First Name</option>
-                    <option value="student-lastname">Last Name</option>
-                    <option value="student-year">Year Level</option>
-                    <option value="course-name">Student Course</option>
+                <select id="searchBy" name="search_by" class="form-select-lg">
+                    <option value="student-id" {% if selected_info == 'student-id' %}selected{% endif %}>ID Number</option>
+                    <option value="student-firstname" {% if selected_info == 'student-firstname' %}selected{% endif %}>First Name</option>
+                    <option value="student-lastname" {% if selected_info == 'student-lastname' %}selected{% endif %}>Last Name</option>
+                    <option value="student-year" {% if selected_info == 'student-year' %}selected{% endif %}>Year Level</option>
+                    <option value="course-and-college" {% if selected_info == 'course-and-college' %}selected{% endif %}>Course and College</option>
                 </select>
                 <input type="text" placeholder="Search student..." id="searchInput" name="search_term" value="{{ request.args.get('search_term', '') }}">
-                <button id="searchButton" type ="submit" class="btn btn-secondary">
+                <button id="searchButton" type="submit" class="btn btn-secondary">
                     Search Info</button>
                 <a href="{{ url_for('students.add_student') }}" class="btn btn-success pull-right" id="addButton">Add Student</a>
             </form>
         </div>
+        
 
 
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -35,7 +36,7 @@
         
         <div class="table-container">
             <!-- Student Information Table -->
-            <table class = "table table-hover table-striped">
+            <table id="student-table" class = "table table-hover table-striped" style="width:100%">
                 <thead class = "bg-primary text-white">
                     <tr>
                         <th scope = "col">Student Picture</th>
@@ -76,6 +77,37 @@
                 </tbody>
             </table>
         </div>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                {% if page > 1 %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('students.student_page', page=page-1, search_term=search_term, search_by=selected_info) }}" tabindex="-1">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                {% endif %}
+        
+                {% for p in range(1, total_pages + 1) %}
+                    <li class="page-item {% if p == page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('students.student_page', page=p, search_term=search_term, search_by=selected_info) }}">{{ p }}</a>
+                    </li>
+                {% endfor %}
+        
+                {% if page < total_pages %}
+                    <li class="page-item">
+                        <a class="page-link" href="{{ url_for('students.student_page', page=page+1, search_term=search_term, search_by=selected_info) }}">Next</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+        
 
                 <!-- Bootstrap Modal -->
         <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">

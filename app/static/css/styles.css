@@ -115,3 +115,42 @@ label {
   padding: 10px
 }
 
+/* Dark mode styles for pagination */
+.pagination {
+  background-color: #1e1e1e;  /* Dark background */
+  color: #fff;  /* Light text color */
+  border-radius: 0.25rem;
+}
+
+.pagination .page-item {
+  background-color: #444;  /* Darker background for items */
+  border-color: #555;  /* Border color for items */
+}
+
+.pagination .page-link {
+  color: #fff;  /* Light color for links */
+  background-color: #444;  /* Dark background for links */
+  border-color: #555;  /* Border color for links */
+}
+
+.pagination .page-item.disabled .page-link {
+  color: #888;  /* Light gray for disabled links */
+  background-color: #333;  /* Dark background for disabled links */
+  border-color: #333;  /* Dark border for disabled links */
+}
+
+.pagination .page-link:hover {
+  color: #fff;  /* Hover text color */
+  background-color: #555;  /* Hover background color */
+  border-color: #666;  /* Hover border color */
+}
+
+.pagination .page-item.active .page-link {
+  color: #fff;  /* Active link text color */
+  background-color: #007bff;  /* Blue background for active page */
+  border-color: #007bff;  /* Border color for active page */
+}
+
+.pagination .page-link:focus {
+  outline: none;  /* Remove default outline on focus */
+}

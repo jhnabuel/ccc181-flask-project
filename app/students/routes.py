@@ -10,12 +10,26 @@ from cloudinary.uploader import upload
 # Define a route for '/student' under the students blueprint
 @students.route('/student', methods=['GET'])
 def student_page():
+    students_per_page = 10
     search_term = request.args.get('search_term', '')  # Get the search term
     search_by = request.args.get('search_by', 'student-id')  # Default to 'course-name'
+    # Get the current page number from the query string, default to 1 if not provided
+    page = int(request.args.get('page', 1))
 
-    students_list = Students.get_all_students(search_by, search_term)
-    print(students_list)
-    return render_template('student/student.html', students=students_list, selected_info=search_by, search_term=search_term)
+    # Calculate the offset for the query
+    offset = (page - 1) * students_per_page
+
+    # Fetch the students for the current page
+    students_list = Students.get_all_students(search_by, search_term, offset, students_per_page)
+
+    # Get the total number of students to calculate the total pages
+    total_students = Students.get_total_students(search_by, search_term)
+
+    # Calculate total number of pages
+    total_pages = (total_students + students_per_page - 1) // students_per_page
+
+    return render_template('student/student.html', students=students_list, selected_info=search_by, 
+                           search_term=search_term, page=page, total_pages=total_pages)
 
 def is_image_file(filename):
     allowed_extensions = {'jpg', 'jpeg', 'png', 'svg'}
